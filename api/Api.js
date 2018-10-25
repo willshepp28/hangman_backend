@@ -1,9 +1,10 @@
 const router = require("express").Router(),
     randomWords = require("random-words"),
-    {
-        getUser
-    } = require("../db/query/userQuery");
-const knex = require("../db/knex");
+    { getUser} = require("../db/query/userQuery"),
+    { registerUser} = require("../db/query/authQuery"),
+    { verifyToken } = require("../helpers/verifyToken"),
+    { encrypt } = require("../helpers/encrypt"),
+     knex = require("../db/knex");
 
 
 
@@ -31,8 +32,10 @@ router.post("/login", (request, response) => {
     /*
         Authenticates user by passing the request.body to the getUser function
     */  
-   console.log(request.body);
-   response.status(200).json(request.body);
+//  console.log(request.body);
+//    response.status(200).json(request.body);
+    registerUser(request.body)
+       
 });
 
 
@@ -45,7 +48,27 @@ router.post("/login", (request, response) => {
 */
 router.post("/signup", (request, response) => {
     console.log(request.body);
-    response.status(200).json(request.body);
+
+
+    if(request.body.username && request.body.password) {
+
+        knex("users")
+            .insert({
+                username: request.body.username,
+                password: encrypt(request.body.password)
+            })
+            .returning("*")
+            .then(success => {
+
+                console.log(success);
+                return response.status(200).json("New user has been created");
+            })
+            .catch(error => { return response.status(500).json(error)})
+
+    } else {
+        return response.status(500).json(error);
+    }
+    
 });
 
 
