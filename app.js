@@ -8,6 +8,7 @@ const express = require("express"),
     cors = require("cors"),
     bodyParser = require("body-parser");
     Api = require("./api/Api");
+    userApi = require("./api/User");
     port = process.env.PORT || 3000;
 
 
@@ -31,7 +32,7 @@ application.use(bodyParser.json());
 application.use(bodyParser.urlencoded({ extended: false }));
 
 
-application.use(cors())
+application.use(cors());
 
 require('dotenv').config();
 
@@ -46,7 +47,7 @@ require('dotenv').config();
 | Api
 |--------------------------------------------------------------------------
 */
-
+application.use("/api/v1/user", userApi);
 application.use("/api/v1", Api);
 
 
