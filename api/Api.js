@@ -30,6 +30,8 @@ router.get("/", async (request, response) => {
 */
 router.post("/login", (request, response) => {
 
+    console.log(typeof process.env.ENCRYPT_SECRET)
+
     if(request.body.username && request.body.password) {
 
         knex("users")

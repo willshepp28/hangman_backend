@@ -16,10 +16,10 @@ const crypto = require("crypto");
 let encrypt = (password => {
        
     if(typeof password !== '') {
-        return crypto.pbkdf2Sync(password.toString(), "salt", 10, 512, process.env.ENCRYPT_SECRET)
+        return crypto.pbkdf2Sync(password.toString(), "salt", 10, 512, "sha512")
         .toString("base64");
     } else {
-        return crypto.pbkdf2Sync(password, "salt", 10, 512, process.env.ENCRYPT_SECRET)
+        return crypto.pbkdf2Sync(password, "salt", 10, 512, "sha512")
         .toString("base64");
     }
 
