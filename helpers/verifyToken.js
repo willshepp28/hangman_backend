@@ -43,4 +43,4 @@ function verifyToken(request, response, next) {
 }
 
 
-module.export = {verifyToken}
+module.exports = verifyToken;

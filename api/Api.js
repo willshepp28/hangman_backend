@@ -2,7 +2,7 @@ const router = require("express").Router(),
     randomWords = require("random-words"),
     { getUser} = require("../db/query/userQuery"),
     { registerUser} = require("../db/query/authQuery"),
-    { verifyToken } = require("../helpers/verifyToken"),
+    verifyToken = require("../helpers/verifyToken"),
     { encrypt } = require("../helpers/encrypt"),
     jwt = require("jsonwebtoken"),
      knex = require("../db/knex");
@@ -38,8 +38,6 @@ router.post("/login", (request, response) => {
                 password: encrypt(request.body.password)
             })
             .then(user => {
-
-                console.log(user);
 
                 // if user arrays is empty send a 202 status code
                 if(user < 1) {
@@ -99,7 +97,7 @@ router.post("/signup", (request, response) => {
 |  Game Api - where we start the game
 |--------------------------------------------------------------------------
 */
-router.get("/startGame", async (request, response) => {
+router.get("/startGame", verifyToken, (request, response) => {
 
     // .createTable("game", (table) => {
     //     table.increments();
