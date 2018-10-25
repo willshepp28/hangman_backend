@@ -39,9 +39,10 @@ router.post("/login", (request, response) => {
             })
             .then(user => {
 
+                console.log(user);
 
                 // if user arrays is empty send a 202 status code
-                if(user > 1) {
+                if(user < 1) {
                     return response.status(404).json("no user found")
                 } else {
 
