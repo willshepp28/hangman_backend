@@ -38,4 +38,27 @@ router.post("/create", async(request, response) => {
         })
 });
 
+
+router.get("/:id", verifyToken, async(request, response) => {
+   
+
+    // get the info on specific game
+    const gameInfo = await knex("game")
+                            .where({
+                                id: parseInt(request.params.id),
+                                userId: request.userId,
+                            })
+                            .then((gameInfo) => {
+                                
+                                let data = {
+                                    attempts: gameInfo[0].attempts,
+                                    wordLength: gameInfo[0].word.length,
+                                    isComplete: gameInfo[0].isComplete
+                                }
+                                
+                                return response.status(200).json(data);
+                            })
+
+})
+
 module.exports = router;
