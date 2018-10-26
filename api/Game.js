@@ -4,24 +4,15 @@ const router = require("express").Router(),
     knex = require("../db/knex");
 
 
-router.get("/", (request, response) => {
-    console.log(request.body);
-    response.json(randomWords());
-});
 
 
 
-
-// .createTable("game", (table) => {
-//     table.increments();
-//     table.integer("userId").unsigned().references("id").inTable("users"); // we get the userId to know who the user is
-//     table.text("word").notNullable(); // we have the word table to see what the word is 
-//     table.text("word-matchs"); // we use this to get all the words user matched in word table
-//     table.integer("attempts").notNullable().defaultTo(0);  // we have a attempts table to track the users attempts
-//     table.boolean("won").notNullable().defaultTo(false);  // we have a won category to see if the user has won
-//     table.boolean("isComplete").notNullable().defaultTo(false); // we use this to check if the user has finished the game by giving up/losing/or winning
-// })
-
+/*
+|--------------------------------------------------------------------------
+|  POST - creates a new game 
+|       - used when user clicks the begin game button on the home component
+|--------------------------------------------------------------------------
+*/
 router.post("/create", async (request, response) => {
 
 
@@ -58,6 +49,17 @@ router.post("/create", async (request, response) => {
 });
 
 
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+|  GET - gets the game by id 
+|       * gets the info we need about the game after use clicks begin on the home component
+|--------------------------------------------------------------------------
+*/
 router.get("/:id", verifyToken, async (request, response) => {
 
 
@@ -81,17 +83,19 @@ router.get("/:id", verifyToken, async (request, response) => {
 });
 
 
+
+
+
+
+
+/*
+|--------------------------------------------------------------------------
+| POST - Where user guesses a word 
+|       - this adds the input (users guess) to the specific game on the game component
+|--------------------------------------------------------------------------
+*/
 router.post("/addWord/:postId", verifyToken, async (request, response) => {
 
-    // .createTable("game", (table) => {
-    //     table.increments();
-    //     table.integer("userId").unsigned().references("id").inTable("users"); // we get the userId to know who the user is
-    //     table.text("word").notNullable(); // we have the word table to see what the word is 
-    //     table.text("word-matchs"); // we use this to get all the words user matched in word table
-    //     table.integer("attempts").notNullable().defaultTo(0);  // we have a attempts table to track the users attempts
-    //     table.boolean("won").notNullable().defaultTo(false);  // we have a won category to see if the user has won
-    //     table.boolean("isComplete").notNullable().defaultTo(false); // we use this to check if the user has finished the game by giving up/losing/or winning
-    // })
 
     // checks if their is a valid input
     if (!request.body.guess) {
@@ -118,37 +122,47 @@ router.post("/addWord/:postId", verifyToken, async (request, response) => {
         })
         .then((gameData) => {
 
-            console.log(gameData);
-
-            console.log(gameData[0].attempts);
-            console.log(typeof gameData[0].attempts)
+             // Makes sure user doesnt try to access a game they have no access to
+             if (gameData.length < 1) {
+                return response.status(403).json("The user has no access to the game with this ID");
+            }
+         
+            // Checks to make sure the users hasnt already had over 9 attempts
             if(gameData[0].attempts > 10) {
                 return response.status(400).json("You have already exceeded 10 attemps");
             }
-            // var wordMatchs = gameData[0].word-matchs; // a array from the word-matchs string in db
 
-            var wordArr = gameData[0].word.split(""); // A array from the word string in db
-            var userGuessArr = request.body.guess.split(""); // A array from the guess input the user sent
 
 /*
 |--------------------------------------------------------------------------
-|  1. We need to see if the users input match any character in the word row returned from the db
-|       * we need to check if the user already put has the guess in db
+|  1. We need to see if the users input match any character in the word property returned from the db
+|       
+        A)  We need to check the matchs property returned from the database,
+            to see if the input (request.body.guess) the user sent is already in the in the matchs property
+
             - if so we need shouldnt add a attempt then send a response "already added"
 
-        * if the user hasnt already added the word already we need to run through
+
+
+        B) If the users input doesnt match any characters on the matchs property,
+            run through the word property, to see if there any character match the input (request.body.guess)
             the characters in from the word table, to see if they match the input
-            - if so, we need to increment attempts, then add the character to the word-matchs, at the correct position
-            - if not we simply increase attempts, then send a response
+
+                - If so, we increment the attempts property, then add the matching 
+                  characters at the exact index, to the matchs property
+
+                - If not we simply increment the attempts property, then send a response
 |--------------------------------------------------------------------------
 */
 
 
 
-            // Makes sure user doesnt try to access a game they have no access to
-            if (gameData.length < 1) {
-                return response.status(403).json("The user has no access to the game with this ID");
-            }
+
+
+
+
+
+
 
             // console.log(gameData);
             response.status(200).json(gameData);
