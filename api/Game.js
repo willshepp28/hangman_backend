@@ -46,8 +46,14 @@ router.post("/create", async (request, response) => {
         })
         .returning("*")
         .then((gameData) => {
-            console.log(gameData);
-            return response.status(200).json({ gameId: gameData[0].id, attemps: gameData[0].attempts, wordLength: gameData[0].word.length, isComplete: gameData[0].isComplete });
+
+            return response.status(200).json({ 
+                gameId: gameData[0].id, 
+                attemps: gameData[0].attempts, 
+                matchs: gameData[0].matchs, 
+                wordLength: gameData[0].word.length, 
+                isComplete: gameData[0].isComplete 
+            });
         })
 });
 
@@ -65,7 +71,7 @@ router.get("/:id", verifyToken, async (request, response) => {
 
             let data = {
                 attempts: gameInfo[0].attempts,
-                wordLength: gameInfo[0].word.length,
+                matchs: gameInfo[0].matchs,
                 isComplete: gameInfo[0].isComplete
             }
 
