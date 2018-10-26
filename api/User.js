@@ -12,9 +12,12 @@ knex = require("../db/knex");
 router.get("/:id", verifyToken, async(request, response) => {
     
     // get user info
-    var user = await knex("users")
+    var user = await knex.select("username")
+                    .from("users")
                     .where({id: parseInt(request.params.id)})
-                    .then(user => {response.status(200).json(user)})
+                    .then(user => {
+                        console.log(user);
+                        response.status(200).json(user)})
                     .catch(error => { console.log(error), response.status(404).json(error)})
 });
 
