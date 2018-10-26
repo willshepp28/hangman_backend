@@ -50,11 +50,11 @@ require('dotenv').config();
 |--------------------------------------------------------------------------
 */
 
-application.use("/api/v1/gamestats", gamestatApi);
+
 application.use("/api/v1/user", userApi);
 application.use("/api/v1", Api);
 application.use("/api/v1/game", gameApi);
-
+application.use("/api/v1/gamestats", gamestatApi);
 
 
 

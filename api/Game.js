@@ -6,6 +6,23 @@ const router = require("express").Router(),
 
 
 
+/*
+|--------------------------------------------------------------------------
+|  GET - gets all the games that are in progress but the user hasnt completed 
+|       - used in the account component
+|--------------------------------------------------------------------------
+*/
+router.get("/notComplete", verifyToken, (request, response) => {
+    
+    knex("game")
+        .where({
+           userId: request.userId,
+           isComplete: false
+        })
+        .then( data =>  response.status(200).json(data))
+        .catch(error => response.status(400).json(error));
+});
+
 
 /*
 |--------------------------------------------------------------------------
@@ -234,5 +251,27 @@ router.post("/addWord/:postId", verifyToken, async (request, response) => {
         });
 
 });
+
+
+
+
+
+// /*
+// |--------------------------------------------------------------------------
+// |  GET - gets all the games that are in progress but the user hasnt completed 
+// |       - used in the account component
+// |--------------------------------------------------------------------------
+// */
+// router.get("/notComplete", (request, response) => {
+    
+//     knex("game")
+//         .where({
+//            userId: 1,
+//            isComplete: false
+//         })
+//         .count()
+//         .then( data =>  response.status(200).json(data))
+//         .catch(error => response.status(400).json(error));
+// });
 
 module.exports = router;

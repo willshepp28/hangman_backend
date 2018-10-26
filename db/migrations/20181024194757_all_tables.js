@@ -14,6 +14,7 @@ exports.up = function(knex, Promise) {
         table.integer("attempts").notNullable().defaultTo(0);  // we have a attempts table to track the users attempts
         table.boolean("won").notNullable().defaultTo(false);  // we have a won category to see if the user has won
         table.boolean("isComplete").notNullable().defaultTo(false); // we use this to check if the user has finished the game by giving up/losing/or winning
+        table.string("status").notNullable().defaultTo("pending");
     })
     
 };
