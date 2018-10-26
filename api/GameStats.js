@@ -65,11 +65,11 @@ router.get("/amount/won", verifyToken, (request, response) => {
 |       - used in the account component
 |--------------------------------------------------------------------------
 */
-router.get("/amount/lost", (request, response) => {
+router.get("/amount/lost", verifyToken, (request, response) => {
     
     knex("game")
         .where({
-            userId: 1,
+            userId: request.userId,
             won: false,
             isComplete: true    
         })
@@ -85,12 +85,13 @@ router.get("/amount/lost", (request, response) => {
 |       - used in the account component
 |--------------------------------------------------------------------------
 */
-router.get("/", (request, response) => {
+router.get("/", verifyToken, (request, response) => {
     
    knex.select("game.id", "word", "attempts",)
         .from("game")
         .where({
-            userId: 1   
+            userId: request.userId,
+            isComplete: true
         })
         .then( data =>  response.status(200).json(data))
         .catch(error => response.status(400).json(error));
