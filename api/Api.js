@@ -30,7 +30,6 @@ router.get("/", async (request, response) => {
 */
 router.post("/login", (request, response) => {
 
-    console.log(typeof process.env.ENCRYPT_SECRET)
 
     if(request.body.username && request.body.password) {
 
@@ -89,34 +88,6 @@ router.post("/signup", (request, response) => {
     }
     
 });
-
-
-
-
-
-/*
-|--------------------------------------------------------------------------
-|  Game Api - where we start the game
-|--------------------------------------------------------------------------
-*/
-router.get("/startGame", verifyToken, (request, response) => {
-
-    // .createTable("game", (table) => {
-    //     table.increments();
-    //     table.integer("userId").unsigned().references("id").inTable("users");
-    //     table.text("word").notNullable();
-    //     table.integer("attempts").notNullable().defaultTo(0);
-    //     table.boolean("won").notNullable().defaultTo(false);
-    // })
-
-    // Randomly generates a word 
-    // The maximum length it will randomly generate is 5 words
-    const word = randomWords({ exactly: 1, maxLength: 5 })[0];
-
-
-
-    response.status(200).json(word);
-})
 
 
 
