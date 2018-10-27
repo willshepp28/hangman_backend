@@ -8,9 +8,9 @@ const express = require("express"),
     cors = require("cors"),
     bodyParser = require("body-parser");
     Api = require("./api/Api");
-    userApi = require("./api/User");
-    gameApi = require("./api/Game");
-    gamestatApi = require("./api/GameStats");
+    userApi = require("./api/UserAPI");
+    gameApi = require("./api/GameAPI");
+    gamestatApi = require("./api/GameStatAPI");
     gameSequenceApi = require("./api/GameSequenceAPI");
     port = process.env.PORT || 3000;
 
