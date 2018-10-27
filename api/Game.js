@@ -13,13 +13,13 @@ const router = require("express").Router(),
 |--------------------------------------------------------------------------
 */
 router.get("/notComplete", verifyToken, (request, response) => {
-    
+
     knex("game")
         .where({
-           userId: request.userId,
-           isComplete: true
+            userId: request.userId,
+            isComplete: true
         })
-        .then( data =>  response.status(200).json(data))
+        .then(data => response.status(200).json(data))
         .catch(error => response.status(400).json(error));
 });
 
@@ -41,7 +41,7 @@ router.post("/create", async (request, response) => {
 
     // iterate over the array get all the dashs for our matchs row in the game db
     wordArr.forEach((character) => {
-        wordMatchs += "- ";
+        wordMatchs += "-";
     });
 
 
@@ -114,6 +114,9 @@ router.get("/:id", verifyToken, async (request, response) => {
 router.post("/addWord/:postId", verifyToken, async (request, response) => {
 
 
+
+    // 1. // MAKE A HELPER FUNCTION THAT DOES THIS ////
+
     // checks if their is a valid input
     if (!request.body.guess) {
         return response.status(400).json("input is required");
@@ -126,9 +129,11 @@ router.post("/addWord/:postId", verifyToken, async (request, response) => {
     if (request.body.guess.length == 0 && request.body.guess.length < 1) {
         return response.status(400).json("Only one value per request");
     }
+    // 1. // MAKE A HELPER FUNCTION THAT DOES THIS ////
 
 
 
+    
     var addWord = await knex.select()
         .from("game")
         .where({
@@ -139,6 +144,9 @@ router.post("/addWord/:postId", verifyToken, async (request, response) => {
         })
         .then((gameData) => {
 
+
+            // 2. // MAKE A HELPER FUNCTION THAT DOES THIS ////
+
             // Makes sure user doesnt try to access a game they have no access to
             if (gameData.length < 1) {
                 return response.status(403).json("The user has no access to the game with this ID");
@@ -148,6 +156,8 @@ router.post("/addWord/:postId", verifyToken, async (request, response) => {
             if (gameData[0].attempts > 10) {
                 return response.status(400).json("You have already exceeded 10 attemps");
             }
+
+            // 2. // MAKE A HELPER FUNCTION THAT DOES THIS ////
 
 
             /*
@@ -172,22 +182,18 @@ router.post("/addWord/:postId", verifyToken, async (request, response) => {
             |--------------------------------------------------------------------------
             */
 
-            //  console.log(gameData);// log gameData promise to see values
-
             // Variables
             var userInput = request.body.guess; // the users input
-            var matchs = gameData[0].matchs.split(" "); // the matchs property
+            var matchs = gameData[0].matchs.split(""); // the matchs property
             var word = gameData[0].word.split("");
-            var attempts = gameData[0].attempts;
             var noMatch = true; // is true if we have no matchs 
             var addAttempts = gameData[0].attempts + 1;
 
-            
+
+
 
             // iterate through the matchs array to see if any match the userInput
             matchs.forEach((character, index) => {
-
-              
 
                 // We check to see if the userInput matchs any characters on the matchs property
                 if (character === userInput) {
@@ -196,51 +202,55 @@ router.post("/addWord/:postId", verifyToken, async (request, response) => {
                     return;
                 }
 
-
-                
-
-                // We check to see if the userInput matchs any characters on the word property
-                // if their is still no matchs and the userInput matchs the word property we add it to the db
-                if (noMatch === true && word[index] === userInput ) {
-                    console.log('here word match')
-                    /**
-                     * 
-                     *           - If so, we increment the attempts property, then add the matching 
-                              characters at the exact index, to the matchs property
-            
-                            - If not we simply increment the attempts property, then send a response
-                     */
-             
-                    
-                    
-                    word.forEach((wordChar, wordIndex) => {
-                        
-                        if(wordChar === userInput) {
-                            matchs.splice(wordIndex, 1, userInput ); 
-                            var updatedMatchs = matchs.join("");
-                            // console.log(updatedMatchs);
-                            
-                          
-
-                            knex("game")
-                                .where({
-                                    id: parseInt(request.params.postId),
-                                    userId: request.userId
-                                })
-                                .update({
-                                    matchs: updatedMatchs,
-                                    attempts: addAttempts
-                                })
-                                .returning("*")
-                                .then(success => console.log(success));
-                      
-                        }
-                        
-                    });
-
-
-                }
             });
+
+
+
+
+            // if the user input doesnt already match any words in the match property
+            if (noMatch === true) {
+
+                word.forEach((character, index) => {
+
+                    // if a character in our word property matchs the user input
+                    if (character === userInput) {
+
+
+                        matchs.splice(index, 1, userInput); // removes the element in matchs property at the specific index, then adds new property
+                        var updatedMatchs = matchs.join(""); // joins the array back to a string.
+
+                        knex("game")
+                            .where({
+                                id: parseInt(request.params.postId),
+                                userId: request.userId
+                            })
+                            .update({
+                                matchs: updatedMatchs,
+                                attempts: addAttempts
+                            })
+                            .returning("*")
+                            .then(success => console.log(success));
+
+                    }
+
+
+                    // If we run through all the character in the words, and none match the user input
+                    // increment attemps
+                    if (word.length === index + 1) {
+
+                        console.log("no matchs with the word property. we are now incrementing attempts");
+                        knex("game")
+                            .where({
+                                id: parseInt(request.params.postId),
+                                userId: request.userId
+                            })
+                            .update({ attempts: addAttempts })
+                            .returning("*")
+                            .then(success => { console.log })
+                    }
+
+                });
+            }
 
 
         })
@@ -254,5 +264,18 @@ router.post("/addWord/:postId", verifyToken, async (request, response) => {
 
 
 
+router.get("/updated/match/:postId", verifyToken, (request, response) => {
+
+    knex.select("matchs", "attempts")
+        .from("game")
+        .where({
+            id: parseInt(request.params.postId),
+            userId: request.userId
+        })
+        .then(updatedGame => { response.status(200).json(updatedGame) })
+        .catch(error => { response.status(500).json(error) });
+});
+
 
 module.exports = router;
+
