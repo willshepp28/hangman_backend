@@ -6,7 +6,7 @@ function Game() {
 };
 
 function SelectGame(...props) {
-    return knex.select(...props);
+    return knex.select(...props).from("game");
 };
 
 
@@ -47,7 +47,7 @@ function createGame(userId, randomWord, wordMatchs) {
 |--------------------------------------------------------------------------
 */
 function updatedGameInfo(postId, userId) {
-    return SelectGame("matchs", "attempts").from("game").where({ id: parseInt(postId), userId: userId });
+    return SelectGame("matchs", "attempts").where({ id: parseInt(postId), userId: userId });
 }
 
 

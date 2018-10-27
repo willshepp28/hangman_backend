@@ -1,5 +1,9 @@
 const router = require("express").Router(),
 verifyToken = require("../helpers/verifyToken"),
+{ 
+    GETUsernameById
+    
+} = require("../db/query/userQuery"),
 knex = require("../db/knex");
 
 
@@ -11,13 +15,8 @@ knex = require("../db/knex");
 */
 router.get("/:id", verifyToken, async(request, response) => {
     
-    // get user info
-    var user = await knex.select("username")
-                    .from("users")
-                    .where({id: parseInt(request.params.id)})
-                    .then(user => {
-                        console.log(user);
-                        response.status(200).json(user)})
+    await GETUsernameById(request.params.id)
+                    .then(user => {response.status(200).json(user)})
                     .catch(error => { console.log(error), response.status(404).json(error)})
 });
 

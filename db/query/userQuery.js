@@ -1,21 +1,27 @@
 const knex = require("../knex");
 
 
-module.exports = {
-    getUser: (credentials) => {
-        return knex("users")
-                .where({
-                    username: credentials.username,
-                    password: credentials.password
-                })
-                .then(user => {
-
-                    // If no user return false
-                    if(user.length > 1) {
-                        return false;
-                    } else {
-                        return user[0].id;
-                    }
-                })
-    }
+function User() {
+    return knex("users");
 };
+
+function SelectUser(...props) {
+    return knex.select(...props).from("users");
+};
+
+
+/*
+|--------------------------------------------------------------------------
+|  QUERY - gets the username
+|--------------------------------------------------------------------------
+*/
+function getUsernameById(userId) {
+    return SelectUser("username").where({ id: parseInt(userId)})
+}
+
+
+
+
+module.exports = {
+    GETUsernameById: getUsernameById
+}
