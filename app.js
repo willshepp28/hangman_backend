@@ -25,8 +25,10 @@ application = express();
 |  Middleware
 |--------------------------------------------------------------------------
 */
-application.use(morgan('dev'));
-// application.use(morgan('combined'))
+console.clear();
+// to log requests
+ application.use(morgan('dev'));
+ 
 
 // parse application/json
 application.use(bodyParser.json());

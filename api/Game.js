@@ -1,24 +1,31 @@
 const router = require("express").Router(),
     randomWords = require("random-words"),
     verifyToken = require("../helpers/verifyToken"),
+    { 
+        GETGameById,
+        GETgameWhereComplete,
+        POSTcreateGame,
+        GETupdatedGameInfo,
+
+
+     } = require("../db/query/gameQuery"),
     knex = require("../db/knex");
+
+
+
 
 
 
 
 /*
 |--------------------------------------------------------------------------
-|  GET - gets all the games that are in progress but the user hasnt completed 
+|  GET - gets all the games that are in progress but the user has completed 
 |       - used in the account component
 |--------------------------------------------------------------------------
 */
-router.get("/notComplete", verifyToken, (request, response) => {
+router.get("/notComplete", verifyToken, async(request, response) => {
 
-    knex("game")
-        .where({
-            userId: request.userId,
-            isComplete: true
-        })
+    await GETgameWhereComplete(request.userId)
         .then(data => response.status(200).json(data))
         .catch(error => response.status(400).json(error));
 });
@@ -30,7 +37,7 @@ router.get("/notComplete", verifyToken, (request, response) => {
 |       - used when user clicks the begin game button on the home component
 |--------------------------------------------------------------------------
 */
-router.post("/create", async (request, response) => {
+router.post("/create", verifyToken, async (request, response) => {
 
 
     var randomPick = randomWords({ exactly: 1, maxLength: 5 })[0]; // a randomly picked word
@@ -38,23 +45,14 @@ router.post("/create", async (request, response) => {
     var wordMatchs = "";
 
 
-
     // iterate over the array get all the dashs for our matchs row in the game db
     wordArr.forEach((character) => {
         wordMatchs += "-";
     });
 
-
-    // Create a new game
-    const newGame = await knex("game")
-        .insert({
-            userId: request.body.tokenId,
-            word: randomPick,
-            matchs: wordMatchs.trimRight()
-        })
+    await POSTcreateGame(request.body.tokenId, randomPick, wordMatchs.trimRight())
         .returning("*")
         .then((gameData) => {
-
             return response.status(200).json({
                 gameId: gameData[0].id,
                 attemps: gameData[0].attempts,
@@ -79,13 +77,7 @@ router.post("/create", async (request, response) => {
 */
 router.get("/:id", verifyToken, async (request, response) => {
 
-
-    // get the info on specific game
-    const gameInfo = await knex("game")
-        .where({
-            id: parseInt(request.params.id),
-            userId: request.userId,
-        })
+    await GETGameById(request.params.id, request.userId)
         .then((gameInfo) => {
 
             let data = {
@@ -93,9 +85,9 @@ router.get("/:id", verifyToken, async (request, response) => {
                 matchs: gameInfo[0].matchs,
                 isComplete: gameInfo[0].isComplete
             }
-
             return response.status(200).json(data);
         })
+        .catch(error => {  return response.status(400).json(error)})
 
 });
 
@@ -263,15 +255,15 @@ router.post("/addWord/:postId", verifyToken, async (request, response) => {
 });
 
 
-
+/*
+|--------------------------------------------------------------------------
+| GET - returns updated game.matchs and game.attempts info when user adds new input
+|       * used in game component
+|--------------------------------------------------------------------------
+*/
 router.get("/updated/match/:postId", verifyToken, (request, response) => {
 
-    knex.select("matchs", "attempts")
-        .from("game")
-        .where({
-            id: parseInt(request.params.postId),
-            userId: request.userId
-        })
+    GETupdatedGameInfo(request.params.postId, request.userId)
         .then(updatedGame => { response.status(200).json(updatedGame) })
         .catch(error => { response.status(500).json(error) });
 });
