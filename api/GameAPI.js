@@ -157,7 +157,7 @@ router.post("/addWord/:gameId", verifyToken, async (request, response) => {
 
                 // We check to see if the userInput matchs any characters on the matchs property
                 if (character === userInput) {
-                    console.log("here in character")
+                    // console.log("here in character")
                     noMatch = false; // we have matchs so noMatch is false
                     return;
                 }
@@ -198,11 +198,11 @@ router.post("/addWord/:gameId", verifyToken, async (request, response) => {
                     // increment attemps
                     if (word.length === index + 1) {
 
-                        console.log("______ADD ATTEMPTS")
-                        console.log(addAttempts);
-                        console.log("______ADD ATTEMPTS")
+                        // console.log("______ADD ATTEMPTS")
+                        // console.log(addAttempts);
+                        // console.log("______ADD ATTEMPTS")
 
-                        console.log("no matchs with the word property. we are now incrementing attempts");
+                        // console.log("no matchs with the word property. we are now incrementing attempts");
                         knex("game")
                             .where({
                                 id: parseInt(request.params.gameId),

@@ -53,7 +53,7 @@ require('dotenv').config();
 |--------------------------------------------------------------------------
 */
 
-application.use("/api/v1/game/sequence", gameSequenceApi);
+application.use("/api/v1/sequence", gameSequenceApi);
 application.use("/api/v1/user", userApi);
 application.use("/api/v1", Api);
 application.use("/api/v1/game", gameApi);
