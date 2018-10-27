@@ -11,6 +11,7 @@ const express = require("express"),
     userApi = require("./api/User");
     gameApi = require("./api/Game");
     gamestatApi = require("./api/GameStats");
+    gameSequenceApi = require("./api/GameSequenceAPI");
     port = process.env.PORT || 3000;
 
 
@@ -52,7 +53,7 @@ require('dotenv').config();
 |--------------------------------------------------------------------------
 */
 
-
+application.use("/api/v1/game/sequence", gameSequenceApi);
 application.use("/api/v1/user", userApi);
 application.use("/api/v1", Api);
 application.use("/api/v1/game", gameApi);

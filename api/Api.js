@@ -50,7 +50,6 @@ router.post("/login", (request, response) => {
                 }
             })
             .catch(error => { console.log(error); return response.status(500).json(error)})
-
     } else {
         console.log(error);
         return response.status(500).json(error)

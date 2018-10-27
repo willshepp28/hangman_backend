@@ -1,11 +1,15 @@
 const router = require("express").Router(),
     randomWords = require("random-words"),
     verifyToken = require("../helpers/verifyToken"),
+    { gameValidation } = require("../helpers/errors/gameValidator"),
+    { validateGuessInput } = require("../helpers/errors/inputErrors"),
     {
         GETGameById,
         GETgameWhereComplete,
         POSTcreateGame,
         GETupdatedGameInfo,
+        GETgameWhereWonFalse,
+        GETcheckCompletion
 
 
     } = require("../db/query/gameQuery"),
@@ -83,7 +87,8 @@ router.get("/:id", verifyToken, async (request, response) => {
             let data = {
                 attempts: gameInfo[0].attempts,
                 matchs: gameInfo[0].matchs,
-                isComplete: gameInfo[0].isComplete
+                isComplete: gameInfo[0].isComplete,
+                status: gameInfo[0].status
             }
             return response.status(200).json(data);
         })
@@ -103,53 +108,16 @@ router.get("/:id", verifyToken, async (request, response) => {
 |       - this adds the input (users guess) to the specific game on the game component
 |--------------------------------------------------------------------------
 */
-router.post("/addWord/:postId", verifyToken, async (request, response) => {
+router.post("/addWord/:gameId", verifyToken, async (request, response) => {
 
 
 
-    // 1. // MAKE A HELPER FUNCTION THAT DOES THIS ////
+    validateGuessInput(request.body.guess); // this method makes sure user sent valid data
 
-    // checks if their is a valid input
-    if (!request.body.guess) {
-        return response.status(400).json("input is required");
-    }
-    // checks if the input is a string
-    if (typeof request.body.guess !== "string") {
-        return response.status(400).json("input must be a string")
-    }
-    // checks if the input is exactly 1
-    if (request.body.guess.length == 0 && request.body.guess.length < 1) {
-        return response.status(400).json("Only one value per request");
-    }
-    // 1. // MAKE A HELPER FUNCTION THAT DOES THIS ////
-
-
-
-
-    var addWord = await knex.select()
-        .from("game")
-        .where({
-            id: parseInt(request.params.postId),
-            userId: request.userId,
-            won: false,
-            isComplete: false
-        })
+    await GETgameWhereWonFalse(parseInt(request.params.gameId), request.userId)
         .then((gameData) => {
 
-
-            // 2. // MAKE A HELPER FUNCTION THAT DOES THIS ////
-
-            // Makes sure user doesnt try to access a game they have no access to
-            if (gameData.length < 1) {
-                return response.status(403).json("The user has no access to the game with this ID");
-            }
-
-            // Checks to make sure the users hasnt already had over 9 attempts
-            if (gameData[0].attempts > 10) {
-                return response.status(400).json("You have already exceeded 10 attemps");
-            }
-
-            // 2. // MAKE A HELPER FUNCTION THAT DOES THIS ////
+            gameValidation(gameData); // this makes sure that the user has access to current game , and that attempts arent greater than 10
 
 
             /*
@@ -213,7 +181,7 @@ router.post("/addWord/:postId", verifyToken, async (request, response) => {
 
                         knex("game")
                             .where({
-                                id: parseInt(request.params.postId),
+                                id: parseInt(request.params.gameId),
                                 userId: request.userId
                             })
                             .update({
@@ -221,7 +189,7 @@ router.post("/addWord/:postId", verifyToken, async (request, response) => {
                                 attempts: addAttempts
                             })
                             .returning("*")
-                            .then(success => console.log(success));
+                            .then(success => console.log("success"));
 
                     }
 
@@ -230,21 +198,23 @@ router.post("/addWord/:postId", verifyToken, async (request, response) => {
                     // increment attemps
                     if (word.length === index + 1) {
 
+                        console.log("______ADD ATTEMPTS")
+                        console.log(addAttempts);
+                        console.log("______ADD ATTEMPTS")
+
                         console.log("no matchs with the word property. we are now incrementing attempts");
                         knex("game")
                             .where({
-                                id: parseInt(request.params.postId),
+                                id: parseInt(request.params.gameId),
                                 userId: request.userId
                             })
                             .update({ attempts: addAttempts })
                             .returning("*")
-                            .then(success => { console.log })
+                            .then(success => {  console.log(success)})
+                            .catch(error => { console.log(error), response.status(400).json(error)})
                     }
-
                 });
             }
-
-
         })
         .then(done => response.status(200).json(done))
         .catch(error => {
@@ -261,11 +231,26 @@ router.post("/addWord/:postId", verifyToken, async (request, response) => {
 |       * used in game component
 |--------------------------------------------------------------------------
 */
-router.get("/updated/match/:postId", verifyToken, async (request, response) => {
+router.get("/updated/match/:gameId", verifyToken, async(request, response) => {
 
-    await GETupdatedGameInfo(request.params.postId, request.userId)
+    await GETupdatedGameInfo(request.params.gameId, request.userId)
         .then(updatedGame => { response.status(200).json(updatedGame) })
         .catch(error => { response.status(500).json(error) });
+});
+
+
+
+/*
+|--------------------------------------------------------------------------
+| GET - used to check if a post is already completed
+|--------------------------------------------------------------------------
+*/
+router.get("/checkComplete/:gameId", verifyToken, (request, response) => {
+
+    GETcheckCompletion(request.params.gameId, request.userId)
+        .then(completionStatus => response.status(200).json(completionStatus))
+        .catch(error => response.status(500).json(error));
+
 });
 
 

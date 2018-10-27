@@ -18,6 +18,16 @@ function SelectGame(...props) {
 
 
 
+/*
+|--------------------------------------------------------------------------
+|  QUERY - get the game where game.won and game.isComplete is false
+|--------------------------------------------------------------------------
+*/
+function gameWhereWonFalse(gameId, userId) {
+    console.log(gameId)
+    return Game().where({ id: parseInt(gameId), userId: userId, won: false, isComplete: false })
+};
+
 
 
 /*
@@ -56,8 +66,19 @@ function createGame(userId, randomWord, wordMatchs) {
 | QUERY - when user adds a input this is the query for getting the updated match, attempt data on game
 |--------------------------------------------------------------------------
 */
-function updatedGameInfo(postId, userId) {
-    return SelectGame("matchs", "attempts").where({ id: parseInt(postId), userId: userId });
+function updatedGameInfo(gameId, userId) {
+    return SelectGame("matchs", "attempts", "status").where({ id: parseInt(gameId),  userId: userId});
+};
+
+
+
+/*
+|--------------------------------------------------------------------------
+| QUERY - to see if what game completion status is
+|--------------------------------------------------------------------------
+*/
+function checkCompletion(gameId, userId) {
+    return SelectGame("isComplete").where({ id: parseInt(gameId), userId: userId });
 };
 
 
@@ -70,5 +91,7 @@ module.exports = {
     GETGameById: getGameById,
     GETgameWhereComplete: gameWhereComplete,
     GETupdatedGameInfo: updatedGameInfo,
+    GETgameWhereWonFalse: gameWhereWonFalse,
+    GETcheckCompletion: checkCompletion,
     POSTcreateGame: createGame
 };
