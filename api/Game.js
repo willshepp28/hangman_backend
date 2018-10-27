@@ -1,14 +1,14 @@
 const router = require("express").Router(),
     randomWords = require("random-words"),
     verifyToken = require("../helpers/verifyToken"),
-    { 
+    {
         GETGameById,
         GETgameWhereComplete,
         POSTcreateGame,
         GETupdatedGameInfo,
 
 
-     } = require("../db/query/gameQuery"),
+    } = require("../db/query/gameQuery"),
     knex = require("../db/knex");
 
 
@@ -23,7 +23,7 @@ const router = require("express").Router(),
 |       - used in the account component
 |--------------------------------------------------------------------------
 */
-router.get("/notComplete", verifyToken, async(request, response) => {
+router.get("/completedGames", verifyToken, async (request, response) => {
 
     await GETgameWhereComplete(request.userId)
         .then(data => response.status(200).json(data))
@@ -87,7 +87,7 @@ router.get("/:id", verifyToken, async (request, response) => {
             }
             return response.status(200).json(data);
         })
-        .catch(error => {  return response.status(400).json(error)})
+        .catch(error => { return response.status(400).json(error) })
 
 });
 
@@ -125,7 +125,7 @@ router.post("/addWord/:postId", verifyToken, async (request, response) => {
 
 
 
-    
+
     var addWord = await knex.select()
         .from("game")
         .where({
@@ -261,9 +261,9 @@ router.post("/addWord/:postId", verifyToken, async (request, response) => {
 |       * used in game component
 |--------------------------------------------------------------------------
 */
-router.get("/updated/match/:postId", verifyToken, (request, response) => {
+router.get("/updated/match/:postId", verifyToken, async (request, response) => {
 
-    GETupdatedGameInfo(request.params.postId, request.userId)
+    await GETupdatedGameInfo(request.params.postId, request.userId)
         .then(updatedGame => { response.status(200).json(updatedGame) })
         .catch(error => { response.status(500).json(error) });
 });

@@ -1,3 +1,8 @@
+/*
+ |--------------------------------------------------------------------------
+ | Require Dependencies
+ |--------------------------------------------------------------------------
+ */
 const knex = require("../knex");
 
 
@@ -10,6 +15,10 @@ function SelectUser(...props) {
 };
 
 
+
+
+
+
 /*
 |--------------------------------------------------------------------------
 |  QUERY - gets the username
@@ -18,6 +27,8 @@ function SelectUser(...props) {
 function getUsernameById(userId) {
     return SelectUser("username").where({ id: parseInt(userId)})
 }
+
+
 
 
 

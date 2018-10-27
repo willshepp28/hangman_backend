@@ -1,3 +1,8 @@
+/*
+ |--------------------------------------------------------------------------
+ | Require Dependencies
+ |--------------------------------------------------------------------------
+ */
 const knex = require("../knex");
 
 
@@ -10,6 +15,11 @@ function SelectGame(...props) {
 };
 
 
+
+
+
+
+
 /*
 |--------------------------------------------------------------------------
 |  QUERY - get the game by id
@@ -17,7 +27,7 @@ function SelectGame(...props) {
 */
 function getGameById(gameId, userId) {
     return Game().where({ id: parseInt(gameId), userId: userId })
-}
+};
 
 
 /*
@@ -27,7 +37,7 @@ function getGameById(gameId, userId) {
 */
 function gameWhereComplete(userId) {
     return Game().where({ userId: userId, isComplete: true });
-}
+};
 
 
 /*
@@ -37,7 +47,7 @@ function gameWhereComplete(userId) {
 */
 function createGame(userId, randomWord, wordMatchs) {
     return Game().insert({ userId: userId, word: randomWord, matchs: wordMatchs.trimRight() });
-}
+};
 
 
 
@@ -48,7 +58,12 @@ function createGame(userId, randomWord, wordMatchs) {
 */
 function updatedGameInfo(postId, userId) {
     return SelectGame("matchs", "attempts").where({ id: parseInt(postId), userId: userId });
-}
+};
+
+
+
+
+
 
 
 module.exports = {
