@@ -49,4 +49,4 @@ Check out the front end code at https://github.com/willshepp28/hangman_frontend
 - Functionality first, design last....
 - make sure your exporting you modules with the right spelling " module.exports not module.export"
 - clean up your routes by putting queries in a query folder.
-- KISS. Yup... that fancy method that used a chain of .split() .reduce() .map() .filter() then join(). Dude just use a  for loop.
+- KISS. Keep it simple
