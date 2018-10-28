@@ -28,10 +28,22 @@ function playerLost(gameId, userId) {
 
 
 
+/*
+|--------------------------------------------------------------------------
+| QUERY - to update the game.status = "won", and game.isComplete to true to show that the player has won
+|--------------------------------------------------------------------------
+*/
+function playerWon(gameId, userId) {
+    return GameSequence().where({ id: parseInt(gameId), userId: userId}).update({ status: "won", won: true, isComplete: true});
+};
+
+
+
 
 
 
 
 module.exports = {
-    POSTplayerLost: playerLost
+    POSTplayerLost: playerLost,
+    POSTplayerWon: playerWon
 };

@@ -18,10 +18,11 @@ function gameValidation(gameData) {
     }
 
     // Checks to make sure the users hasnt already had over 9 attempts
-    if (gameData[0].attempts > 10) {
+    if (gameData[0].attempts >= 10) {
         return response.status(400).send({ message: "You have already exceeded 10 attemps"});
     }
 
+    
 
 };
 

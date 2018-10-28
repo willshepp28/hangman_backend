@@ -3,7 +3,8 @@
  | Require Dependencies
  |--------------------------------------------------------------------------
  */
-const express = require("express"),
+const compression = require('compression'),
+     express = require("express"),
     morgan = require("morgan"),
     cors = require("cors"),
     bodyParser = require("body-parser");
@@ -27,6 +28,8 @@ application = express();
 |--------------------------------------------------------------------------
 */
 console.clear();
+
+application.use(compression())
 // to log requests
  application.use(morgan('dev'));
  

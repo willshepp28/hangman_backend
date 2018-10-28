@@ -11,8 +11,8 @@ const router = require("express").Router(),
         GETgameWhereWonFalse,
         GETcheckCompletion
 
-
     } = require("../db/query/gameQuery"),
+    { POSTplayerWon } = require("../db/query/gameSequenceQuery"),
     knex = require("../db/knex");
 
 
@@ -110,113 +110,119 @@ router.get("/:id", verifyToken, async (request, response) => {
 */
 router.post("/addWord/:gameId", verifyToken, async (request, response) => {
 
-
+    var isMatching = false;
 
     validateGuessInput(request.body.guess); // this method makes sure user sent valid data
 
     await GETgameWhereWonFalse(parseInt(request.params.gameId), request.userId)
         .then((gameData) => {
 
-            gameValidation(gameData); // this makes sure that the user has access to current game , and that attempts arent greater than 10
+            console.log("_______***")
+            console.log(gameData);
+            console.log("_______***")
+            if (!isMatching) {
+
+                // gameValidation(gameData); // this makes sure that the user has access to current game , and that attempts arent greater than 10
 
 
-            /*
-            |--------------------------------------------------------------------------
-            |  1. We need to see if the users input match any character in the word property returned from the db
-            |       
-                    A)  We need to check the matchs property returned from the database,
-                        to see if the input (request.body.guess) the user sent is already in the in the matchs property
-            
-                        - if so we do nothing,then send a response "already added"
-            
-            
-            
-                    B) If the users input doesnt match any characters on the matchs property,
-                        run through the word property, to see if there any character match the input (request.body.guess)
-                        the characters in from the word table, to see if they match the input
-            
-                            - If so, we increment the attempts property, then add the matching 
-                              characters at the exact index, to the matchs property
-            
-                            - If not we simply increment the attempts property, then send a response
-            |--------------------------------------------------------------------------
-            */
+                /*
+                |--------------------------------------------------------------------------
+                |  1. We need to see if the users input match any character in the word property returned from the db
+                |       
+                        A)  We need to check the matchs property returned from the database,
+                            to see if the input (request.body.guess) the user sent is already in the in the matchs property
+                
+                            - if so we do nothing,then send a response "already added"
+                
+                
+                
+                        B) If the users input doesnt match any characters on the matchs property,
+                            run through the word property, to see if there any character match the input (request.body.guess)
+                            the characters in from the word table, to see if they match the input
+                
+                                - If so, we increment the attempts property, then add the matching 
+                                  characters at the exact index, to the matchs property
+                
+                                - If not we simply increment the attempts property, then send a response
+                |--------------------------------------------------------------------------
+                */
 
-            // Variables
-            var userInput = request.body.guess; // the users input
-            var matchs = gameData[0].matchs.split(""); // the matchs property
-            var word = gameData[0].word.split("");
-            var noMatch = true; // is true if we have no matchs 
-            var addAttempts = gameData[0].attempts + 1;
+                // Variables
+                var userInput = request.body.guess; // the users input
+                var matchs = gameData[0].matchs.split(""); // the matchs property
+                var word = gameData[0].word.split("");
+                var noMatch = true; // is true if we have no matchs 
+                var addAttempts = gameData[0].attempts + 1;
+                var noWordmatch = true;
 
+                // iterate through the matchs array to see if any match the userInput
+                matchs.forEach((character, index) => {
 
-
-
-            // iterate through the matchs array to see if any match the userInput
-            matchs.forEach((character, index) => {
-
-                // We check to see if the userInput matchs any characters on the matchs property
-                if (character === userInput) {
-                    // console.log("here in character")
-                    noMatch = false; // we have matchs so noMatch is false
-                    return;
-                }
-
-            });
-
-
-
-
-            // if the user input doesnt already match any words in the match property
-            if (noMatch === true) {
-
-                word.forEach((character, index) => {
-
-                    // if a character in our word property matchs the user input
+                    // We check to see if the userInput matchs any characters on the matchs property
                     if (character === userInput) {
-
-
-                        matchs.splice(index, 1, userInput); // removes the element in matchs property at the specific index, then adds new property
-                        var updatedMatchs = matchs.join(""); // joins the array back to a string.
-
-                        knex("game")
-                            .where({
-                                id: parseInt(request.params.gameId),
-                                userId: request.userId
-                            })
-                            .update({
-                                matchs: updatedMatchs,
-                                attempts: addAttempts
-                            })
-                            .returning("*")
-                            .then(success => console.log("success"));
-
-                    }
-
-
-                    // If we run through all the character in the words, and none match the user input
-                    // increment attemps
-                    if (word.length === index + 1) {
-
-                        // console.log("______ADD ATTEMPTS")
-                        // console.log(addAttempts);
-                        // console.log("______ADD ATTEMPTS")
-
-                        // console.log("no matchs with the word property. we are now incrementing attempts");
-                        knex("game")
-                            .where({
-                                id: parseInt(request.params.gameId),
-                                userId: request.userId
-                            })
-                            .update({ attempts: addAttempts })
-                            .returning("*")
-                            .then(success => {  console.log(success)})
-                            .catch(error => { console.log(error), response.status(400).json(error)})
+                        // console.log("here in character")
+                        noMatch = false; // we have matchs so noMatch is false
+                        return;
                     }
                 });
+
+
+                // if the user input doesnt already match any words in the match property
+                if (noMatch === true) {
+
+                    word.forEach((character, index) => {
+
+                        // if a character in our word property matchs the user input
+                        if (character === userInput) {
+
+                            noWordmatch = false;
+
+                            matchs.splice(index, 1, userInput); // removes the element in matchs property at the specific index, then adds new property
+                            var updatedMatchs = matchs.join(""); // joins the array back to a string.
+
+                            GETGameById(request.params.gameId, request.userId)
+                                .update({
+                                    matchs: updatedMatchs,
+                                    attempts: addAttempts
+                                })
+                                .returning("*")
+                                .then(data => {
+
+                                    if (data[0].matchs === data[0].word && data[0].attempts < 10) {
+                                    
+                                        POSTplayerWon(request.params.gameId, request.userId)
+                                            .returning("*")
+                                            .then((stats) => { console.log("*88848888"),console.log(stats), console.log("88888888")})
+                                            .catch(error => { console.log(error)});
+                                          
+                                    }
+                                })
+                                .catch(error => { response.status(400).json(error) })
+
+                        }
+
+                        // If we run through all the character in the words, and none match the user input
+                        // increment attemps
+                        if (word.length === index + 1 && noWordmatch === true) {
+                            knex("game")
+                                .where({
+                                    id: parseInt(request.params.gameId),
+                                    userId: request.userId
+                                })
+                                .update({ attempts: addAttempts })
+                                .returning("*")
+                                .then(success => { console.log(success)})
+                                .catch(error => { console.log(error), response.status(400).json(error) })
+                        }
+                    });
+                }
+
             }
+      
+            return gameData;
+
         })
-        .then(done => response.status(200).json(done))
+        .then(data => { return response.status(200).json(data)})
         .catch(error => {
             console.log(error);
             response.status(400).json(error);
@@ -231,10 +237,10 @@ router.post("/addWord/:gameId", verifyToken, async (request, response) => {
 |       * used in game component
 |--------------------------------------------------------------------------
 */
-router.get("/updated/match/:gameId", verifyToken, async(request, response) => {
+router.get("/updated/match/:gameId", verifyToken, async (request, response) => {
 
     await GETupdatedGameInfo(request.params.gameId, request.userId)
-        .then(updatedGame => { response.status(200).json(updatedGame) })
+        .then(updatedGame => { console.log(updatedGame) ,response.status(200).json(updatedGame) })
         .catch(error => { response.status(500).json(error) });
 });
 
