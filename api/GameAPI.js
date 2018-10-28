@@ -112,14 +112,11 @@ router.post("/addWord/:gameId", verifyToken, async (request, response) => {
 
     var isMatching = false;
 
-    validateGuessInput(request.body.guess); // this method makes sure user sent valid data
+    // validateGuessInput(request.body.guess); // this method makes sure user sent valid data
 
     await GETgameWhereWonFalse(parseInt(request.params.gameId), request.userId)
         .then((gameData) => {
-
-            console.log("_______***")
-            console.log(gameData);
-            console.log("_______***")
+            
             if (!isMatching) {
 
                 // gameValidation(gameData); // this makes sure that the user has access to current game , and that attempts arent greater than 10
@@ -182,8 +179,7 @@ router.post("/addWord/:gameId", verifyToken, async (request, response) => {
 
                             GETGameById(request.params.gameId, request.userId)
                                 .update({
-                                    matchs: updatedMatchs,
-                                    attempts: addAttempts
+                                    matchs: updatedMatchs
                                 })
                                 .returning("*")
                                 .then(data => {
@@ -192,7 +188,7 @@ router.post("/addWord/:gameId", verifyToken, async (request, response) => {
                                     
                                         POSTplayerWon(request.params.gameId, request.userId)
                                             .returning("*")
-                                            .then((stats) => { console.log("*88848888"),console.log(stats), console.log("88888888")})
+                                            .then((stats) => { console.log(stats)})
                                             .catch(error => { console.log(error)});
                                           
                                     }
@@ -218,16 +214,13 @@ router.post("/addWord/:gameId", verifyToken, async (request, response) => {
                 }
 
             }
-      
             return gameData;
-
         })
         .then(data => { return response.status(200).json(data)})
         .catch(error => {
             console.log(error);
             response.status(400).json(error);
         });
-
 });
 
 

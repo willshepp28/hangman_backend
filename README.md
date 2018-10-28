@@ -50,3 +50,9 @@ Check out the front end code at https://github.com/willshepp28/hangman_frontend
 - make sure your exporting you modules with the right spelling " module.exports not module.export"
 - clean up your routes by putting queries in a query folder.
 - KISS. Keep it simple
+
+
+## Resources 
+
+- How to change variables in angular based on the enviroment https://alligator.io/angular/environment-variables
+- Optimizing your app https://www.youtube.com/watch?v=FOdetrZCsmU
