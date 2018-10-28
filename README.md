@@ -31,6 +31,11 @@ Check out the front end code at https://github.com/willshepp28/hangman_frontend
     random-words - to generate random words
 ```
 
+## Database Design
+
+
+![](https://s3.amazonaws.com/hangman-app/database-mockup/hangman-databasedesign.png)
+
 
   ## Requirements
 
