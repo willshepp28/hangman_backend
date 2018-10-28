@@ -42,3 +42,10 @@ Check out the front end code at https://github.com/willshepp28/hangman_frontend
   - [] If all fields are filled with their letter before 10 incorrect guesses, the player has won the game.
 
 
+## Lesson Learned
+
+- DEPLOY FROM THE START
+- Test every freaking maor feature , route, function, and api call. So much time wasted. TDD is a major key alert.
+- Functionality first, design last....
+- make sure your exporting you modules with the right spelling " module.exports not module.export"
+- clean up your routes by putting queries in a query folder.
