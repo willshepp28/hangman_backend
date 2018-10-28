@@ -216,7 +216,15 @@ router.post("/addWord/:gameId", verifyToken, async (request, response) => {
             }
             return gameData;
         })
-        .then(data => { return response.status(200).json(data)})
+        .then(data => { 
+            console.log(data);
+            let newData = [{
+                matchs: data[0].matchs,
+                attempts: data[0].attemps,
+                stats: data[0].status
+            }];
+            
+            return response.status(200).json(newData)})
         .catch(error => {
             console.log(error);
             response.status(400).json(error);
