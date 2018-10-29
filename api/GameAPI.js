@@ -157,9 +157,12 @@ router.post("/addWord/:gameId", verifyToken, async (request, response) => {
             .catch(error => { console.log(error), response.status(400).json(error) })
     }
 
+  
 
-
-    return response.status(200).json(game);
+    return response.status(200).json({
+        attempts: game[0].attemps,
+        matchs: game[0].matchs,
+    });
 
 })
 
