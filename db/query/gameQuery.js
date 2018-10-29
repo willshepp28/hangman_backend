@@ -24,7 +24,6 @@ function SelectGame(...props) {
 |--------------------------------------------------------------------------
 */
 function gameWhereWonFalse(gameId, userId) {
-    console.log(gameId)
     return Game().where({ id: parseInt(gameId), userId: userId, won: false, isComplete: false })
 };
 
