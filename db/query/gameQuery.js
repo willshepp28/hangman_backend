@@ -66,7 +66,7 @@ function createGame(userId, randomWord, wordMatchs) {
 |--------------------------------------------------------------------------
 */
 function updatedGameInfo(gameId, userId) {
-    return SelectGame("matchs", "attempts", "status").where({ id: parseInt(gameId),  userId: userId});
+    return SelectGame("matchs", "attempts", "status").where({ id: parseInt(gameId), userId: userId });
 };
 
 
@@ -82,6 +82,16 @@ function checkCompletion(gameId, userId) {
 
 
 
+/*
+|---------------------------------s-----------------------------------------
+| QUERY - to update the attempts on a specific game
+|--------------------------------------------------------------------------
+*/
+function increaseAttempts(gameId, userId,attempts) {
+    return Game().where({ id: parseInt(gameId), userId: userId }).update({ attempts: attempts })
+};
+
+
 
 
 
@@ -92,5 +102,6 @@ module.exports = {
     GETupdatedGameInfo: updatedGameInfo,
     GETgameWhereWonFalse: gameWhereWonFalse,
     GETcheckCompletion: checkCompletion,
-    POSTcreateGame: createGame
+    POSTcreateGame: createGame,
+    POSTincreaseAttempts: increaseAttempts
 };

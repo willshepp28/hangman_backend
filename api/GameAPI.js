@@ -8,6 +8,7 @@ const router = require("express").Router(),
         GETGameById,
         GETgameWhereComplete,
         POSTcreateGame,
+        POSTincreaseAttempts,
         GETupdatedGameInfo,
         GETgameWhereWonFalse,
         GETcheckCompletion
@@ -127,12 +128,11 @@ router.post("/addWord/:gameId", verifyToken, async (request, response) => {
     var regex = new RegExp(userInput, "gi");
     var alreadyMatched = false; // we switch this based on whether the user already guesses the word or not.
 
-
-
     // We pass in the game id , and userId to get the game the user is adding a word to 
     var game = await GETgameWhereWonFalse(parseInt(request.params.gameId), request.userId);
-    var words = await game[0].word.split("");
-    var matchs = await game[0].matchs.split("");
+    var words = game[0].word.split("");
+    var matchs = game[0].matchs.split("");
+    var addAttempts = game[0].attempts + 1;
 
 
     // If the user already guesses the correct word before
@@ -141,25 +141,17 @@ router.post("/addWord/:gameId", verifyToken, async (request, response) => {
         alreadyMatched = true;
     }
 
-
     // if the word matchs the user input, and the user hasnt already guessed it before
-    if (regex.test(game[0].word) && alreadyMatched === false) {
-        // The word Matchs function takes the user input and checks if any matches the word
+     // The word Matchs function takes the user input and checks if any matches the word
         // If so we store the correct guess in the db
         // If not, we increment attempts
+    if (regex.test(game[0].word) && alreadyMatched === false) {
         wordMatches(userInput, words, matchs, request.params.gameId, request.userId );
-
-
 
         // if the user guesses incorrectyl
     } else if (!regex.test(game[0].word && alreadyMatched === false)) {
         console.log("The user didnt match the word");
-        knex("game")
-            .where({
-                id: parseInt(request.params.gameId),
-                userId: request.userId
-            })
-            .update({ attempts: addAttempts })
+        POSTincreaseAttempts(request.params.gameId, request.userId, addAttempts)
             .returning("*")
             .then(success => { console.log(success) })
             .catch(error => { console.log(error), response.status(400).json(error) })
