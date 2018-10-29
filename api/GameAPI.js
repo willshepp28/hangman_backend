@@ -63,8 +63,6 @@ router.post("/create", verifyToken, async (request, response) => {
                 gameId: gameData[0].id,
                 attemps: gameData[0].attempts,
                 matchs: gameData[0].matchs,
-                wordLength: gameData[0].word.length,
-                isComplete: gameData[0].isComplete
             });
         })
 });
@@ -89,8 +87,6 @@ router.get("/:id", verifyToken, async (request, response) => {
             let data = {
                 attempts: gameInfo[0].attempts,
                 matchs: gameInfo[0].matchs,
-                isComplete: gameInfo[0].isComplete,
-                status: gameInfo[0].status
             }
             return response.status(200).json(data);
         })
@@ -130,6 +126,7 @@ router.post("/addWord/:gameId", verifyToken, async (request, response) => {
 
     // We pass in the game id , and userId to get the game the user is adding a word to 
     var game = await GETgameWhereWonFalse(parseInt(request.params.gameId), request.userId);
+
     var words = game[0].word.split("");
     var matchs = game[0].matchs.split("");
     var addAttempts = game[0].attempts + 1;
@@ -158,13 +155,9 @@ router.post("/addWord/:gameId", verifyToken, async (request, response) => {
     }
 
   
+    return response.status(200).json({ attempts: game[0].attemps, matchs: game[0].matchs });
 
-    return response.status(200).json({
-        attempts: game[0].attemps,
-        matchs: game[0].matchs,
-    });
-
-})
+});
 
 
 
