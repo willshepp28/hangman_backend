@@ -5,6 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
+    "test": "mocha --timeout 3000 --recursive",
     "dropdb": "knex migrate:rollback && knex migrate:latest && knex seed:run"
   },
   "engines": {
