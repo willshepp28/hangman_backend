@@ -1,5 +1,15 @@
 // update with you config settings.
 module.exports = {
+    test: {
+        client: 'pg',
+        connection: 'postgres://localhost/Hangman_test',
+        migrations: {
+          directory: __dirname + '/db/migrations'
+        },
+        seeds: {
+          directory: __dirname + '/db/seeds/test'
+        }
+      },
     development: {
         client: 'pg',
         connection: 'postgres://localhost/Hangman',
@@ -7,7 +17,7 @@ module.exports = {
             directory: __dirname + '/db/migrations',
         },
         seeds: {
-            directory: __dirname + '/db/seeds',
+            directory: __dirname + '/db/seeds/development',
         },
     },
     production: {
@@ -17,7 +27,7 @@ module.exports = {
             directory: __dirname + '/db/migrations',
         },
         seeds: {
-            directory: __dirname + '/db/seeds',
+            directory: __dirname + '/db/seeds/development',
         },
     }
   }
