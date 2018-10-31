@@ -29,10 +29,27 @@ function getUsernameById(userId) {
 }
 
 
+/*
+|--------------------------------------------------------------------------
+|  QUERY - gets the username
+|--------------------------------------------------------------------------
+*/
+function findOrCreate(username) {
+    return User().where({ username: username})
+        .then(response => {
+            // if there is no users then create one
+            if( response.length === 0) {
+                return User().insert({ username: username});
+            }
+        });
+};
+
+
 
 
 
 
 module.exports = {
-    GETUsernameById: getUsernameById
+    GETUsernameById: getUsernameById,
+    POSTfindorCreate: findOrCreate
 }
