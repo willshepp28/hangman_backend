@@ -2,8 +2,12 @@ const express = require("express"),
     application = express();
 passport = require("passport"),
     FacebookStrategy = require("passport-facebook").Strategy,
-    knex = require("../../db/knex");
-
+    knex = require("../../db/knex"),
+    {
+        GETfindByFBid,
+        POSTcreateFBuser
+    } = require("../../db/query/userQuery"),
+    require('dotenv').config();;
 
 
 
@@ -12,24 +16,30 @@ passport = require("passport"),
 | Strategry where users signup through facebook
 |--------------------------------------------------------------------------
 */
-passport.use(new FacebookStrategy({
+passport.use(new FacebookStrategy({ 
     clientID: process.env.FACEBOOK_APP_ID,
     clientSecret: process.env.FACEBOOK_APP_SECRET,
     callbackURL: "http://localhost:3000/api/v1/auth/providers/facebook/callback",
-    profileFields: ["username"]
+    profileFields: ["id", "first_name", "picture",]
 },
     async function (accessToken, refreshToken, profile, facebookCallback) {
-        console.log('success!!! access Token --->', accessToken);
-        console.log('success!!! refresh Token --->', refreshToken);
-        console.log('success!!! Profile --->', profile);
-        console.log('Photo url --->', profile.photos[0].value);
+        
 
-        const { id, username } = profile;
+        const { id ,first_name } = profile._json;
 
-        if (accessToken) { return facebookCallback(null, { accessToken, refreshToken, profile }) }
-        if (refreshToken) { return facebookCallback(null, refreshToken) }
+      console.log("___________");
+     console.log(id);
+     console.log(first_name);
+      console.log("___________");
+        // Run this query and check if the user already exists
+        const currentUser = await GETfindByFBid(id);
 
-        return facebookCallback('ERROR : No refresh or access Token exists!')
+        if(!currentUser.length) {
+            console.log("This user is currently not a member");
+            await POSTcreateFBuser()
+        }
+
+       
     }
 ));
 

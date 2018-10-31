@@ -46,10 +46,32 @@ function findOrCreate(username) {
 
 
 
+/*
+|--------------------------------------------------------------------------
+|  QUERY - get user by facebook_id
+|--------------------------------------------------------------------------
+*/
+function findByFBid(id){
+    return User().where({ facebook_id: id}).limit(1);
+}
+
+
+/*
+|--------------------------------------------------------------------------
+|  QUERY - create user with facebook credentials
+|--------------------------------------------------------------------------
+*/
+function createFBuser(id, name){
+    return User().insert({ facebook_id: id, username: name })
+}
+
+
 
 
 
 module.exports = {
     GETUsernameById: getUsernameById,
-    POSTfindorCreate: findOrCreate
+    POSTfindorCreate: findOrCreate,
+    GETfindByFBid: findByFBid,
+    POSTcreateFBuser: createFBuser
 }
