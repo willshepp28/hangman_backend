@@ -13,23 +13,44 @@ Check out the front end code at https://github.com/willshepp28/hangman_frontend
 ---
 
 
-## Technologies Used
+## Services
 
-```js
- Express
- Angular 6
- Knex/ PostgreSQL
- AWS - for deployment
-
- 
-```
+* [Heroku][]: Hosting
 
 
-## Api Used
+## Software
 
-```
-    random-words - to generate random words
-```
+* [Node.js][]: server-side javascript
+* [npm][]: Package management for Node.js packages
+* [PostgreSQL][]: a object-relational database management system 
+* [Express][]: web application framework
+* [Knex][]: SQL query builder
+* [Angular 6][]: client-side framework
+
+
+## Node Packages (Backend)
+
+* [cors][]: middleware that can be used to enable CORS with various options.
+* [jsonwebtoken][]: allow claims, such as user data, to be represented in a secure manner.
+* [random-words][]: generates random words for use as simple text.
+* [pg][]: Postgres driver for Node.js
+* [compression][]: ompression middleware.
+
+
+[Heroku]: http://heroku.com/
+
+[Node.js]: http://nodejs.org/
+[npm]: https://npmjs.org/
+[PostgreSQL]: http://www.postgresql.org/
+[Express]: http://expressjs.com/
+[Knex]: https://knexjs.org/
+[Angular 6]: https://angular.io/
+
+[cors]:
+[jsonwebtoken]: https://jwt.io/
+[compression]: https://github.com/expressjs/compression
+[random-word][]: https://github.com/punkave/random-words#readme
+[pg]: https://github.com/brianc/node-postgres
 
 ## Database Design
 

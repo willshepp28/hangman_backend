@@ -4,6 +4,7 @@ exports.up = function(knex, Promise) {
     .createTable("users", (table) => {
         table.increments();
         table.string("username").notNullable();
+        table.string("facebookProvider").defaultTo(null);
         table.text("password").notNullable();
     })
     .createTable("game", (table) => {

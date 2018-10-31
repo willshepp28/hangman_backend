@@ -1,10 +1,10 @@
-const express = require("express"),
+const router = require("express").Router(),
     knex = require("knex");
 
 
 // /api/v1/auth/providers
 
-router.get("/", (request, response) => {
+router.get("/facebook", (request, response) => {
     return response.status(200).json({
         message: "Successful arrived at the API route"
     });

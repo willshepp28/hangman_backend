@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node app.js",
     "test": "mocha --timeout 3000 --recursive",
-    "dropdb": "knex migrate:rollback && knex migrate:latest && knex seed:run"
+    "dropdb": "knex migrate:rollback && knex migrate:latest && knex seed:run",
+    "seed": "knex migrate:latest && knex seed:run"
   },
   "engines": {
     "node": "9.11.1",
@@ -31,6 +32,8 @@
     "jsonwebtoken": "^8.3.0",
     "knex": "^0.15.2",
     "morgan": "^1.9.1",
+    "passport": "^0.4.0",
+    "passport-facebook": "^2.1.1",
     "pg": "^7.5.0",
     "random-words": "^1.1.0"
   },
