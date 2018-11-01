@@ -13,7 +13,7 @@ const router = require("express").Router(),
 router.get("/facebook", passportFacebook.authenticate("facebook"));
 
 
-
+//https://hangman-frontend.herokuapp.com/login
 
 
 
@@ -23,11 +23,12 @@ router.get("/facebook/callback", passportFacebook.authenticate("facebook", { ses
     let token = jwt.sign({ user: request.user }, process.env.JWT_SECRET);
     
     if(request.user) {
-        return response.redirect(`http://localhost:4200/login?token=${token}`);
+        return response.redirect(`https://hangman-frontend.herokuapp.com/login?token=${token}`);
+        // return response.redirect(`http://localhost:4200/login?token=${token}`);
     }
 
     if(!request.user) {
-        return response.redirect("https://localhost:3000/api/v1/login");
+        return response.redirect("https://hangman-frontend.herokuapp.com/login");
     }
     
    
