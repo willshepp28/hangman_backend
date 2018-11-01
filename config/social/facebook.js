@@ -23,7 +23,7 @@ passport.use(new FacebookStrategy({
     // clientSecret: process.env.TEST_FACEBOOK_APP_SECRET,
     clientID: process.env.FACEBOOK_APP_ID,
     clientSecret: process.env.FACEBOOK_APP_SECRET,
-    callbackURL: "https://localhost:3000/api/v1/auth/providers/facebook/callback"
+    callbackURL: "https://hangman-backend.herokuapp.com/api/v1/auth/providers/facebook/callback"
 },
     async (accessToken, refreshToken, profile, callback) => {
 
