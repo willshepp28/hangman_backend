@@ -87,6 +87,7 @@ router.get("/:id", verifyToken, async (request, response) => {
             let data = {
                 attempts: gameInfo[0].attempts,
                 matchs: gameInfo[0].matchs,
+                status: gameInfo[0].status
             }
             return response.status(200).json(data);
         })
@@ -148,7 +149,7 @@ router.post("/addWord/:gameId", verifyToken, async (request, response) => {
         // if the user guesses incorrectyl
     } else if (!regex.test(game[0].word && alreadyMatched === false)) {
         console.log("The user didnt match the word");
-        POSTincreaseAttempts(request.params.gameId, request.userId, addAttempts)
+        await POSTincreaseAttempts(request.params.gameId, request.userId, addAttempts)
             .returning("*")
             .then(success => { console.log(success) })
             .catch(error => { console.log(error), response.status(400).json(error) })

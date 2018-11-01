@@ -62,6 +62,7 @@ function findByFBid(id){
 |--------------------------------------------------------------------------
 */
 function createFBuser(id, name){
+    console.log(`name is ${name}`);
     return User().insert({ facebook_id: id, username: name })
 }
 

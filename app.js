@@ -16,8 +16,6 @@ const compression = require('compression'),
     gameSequenceApi = require("./api/GameSequenceAPI"),
     port = process.env.PORT || 3000;
 
-
-
 application = express();
 
 
@@ -30,6 +28,7 @@ application = express();
 */
 console.clear();
 
+// console.log(fs.readlinkSync.toString(path.resolve("")))
 application.use(compression())
 // to log requests
  application.use(morgan('dev'));

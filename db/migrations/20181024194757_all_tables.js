@@ -5,7 +5,7 @@ exports.up = function(knex, Promise) {
         table.increments();
         table.string("username").notNullable();
         table.string("facebook_id");
-        table.text("password").notNullable();
+        table.text("password");
     })
     .createTable("game", (table) => {
         table.increments();

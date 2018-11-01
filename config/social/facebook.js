@@ -2,6 +2,7 @@ const express = require("express"),
     application = express();
 passport = require("passport"),
     FacebookStrategy = require("passport-facebook").Strategy,
+    // { Strategry: FacebookStrategy } = require("passport-facebook")
     knex = require("../../db/knex"),
     {
         GETfindByFBid,
@@ -10,36 +11,43 @@ passport = require("passport"),
     require('dotenv').config();;
 
 
+// https://localhost:3000/api/v1/auth/providers/facebook/
 
 /*
 |--------------------------------------------------------------------------
 | Strategry where users signup through facebook
 |--------------------------------------------------------------------------
 */
-passport.use(new FacebookStrategy({ 
+passport.use(new FacebookStrategy({
+    // clientID: process.env.TEST_FACEBOOK_APP_ID,
+    // clientSecret: process.env.TEST_FACEBOOK_APP_SECRET,
     clientID: process.env.FACEBOOK_APP_ID,
     clientSecret: process.env.FACEBOOK_APP_SECRET,
-    callbackURL: "http://localhost:3000/api/v1/auth/providers/facebook/callback",
-    profileFields: ["id", "first_name", "picture",]
+    callbackURL: "https://localhost:3000/api/v1/auth/providers/facebook/callback"
 },
-    async function (accessToken, refreshToken, profile, facebookCallback) {
-        
+    async (accessToken, refreshToken, profile, callback) => {
 
-        const { id ,first_name } = profile._json;
 
-      console.log("___________");
-     console.log(id);
-     console.log(first_name);
-      console.log("___________");
-        // Run this query and check if the user already exists
-        const currentUser = await GETfindByFBid(id);
+        const { id, displayName } = profile;
+        // // 1. Check to see if user is already in the databse
+        const User = await GETfindByFBid(id);
 
-        if(!currentUser.length) {
-            console.log("This user is currently not a member");
-            await POSTcreateFBuser()
+        if (User.length) {
+            callback(null, User)
         }
 
-       
+        // 2. If not, create a new user in teh database
+        if (!User.length) {
+            console.log("no user in the database matching those credentials");
+            const facebookUser = await POSTcreateFBuser(id, displayName).returning("*")
+                .then(fbUser => { console.log(fbUser) })
+                .catch(error => { console.log(error) });
+
+                callback(null, facebookUser);
+        }
+
+        
+        
     }
 ));
 

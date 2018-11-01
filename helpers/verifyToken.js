@@ -36,8 +36,9 @@ function verifyToken(request, response, next) {
         return response.status(401).send("Unauthorized request");
     }
 
-
+   
     request.userId = payload.user[0].id;
+ 
    
     next();
 }
