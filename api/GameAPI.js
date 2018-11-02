@@ -1,5 +1,4 @@
 const router = require("express").Router(),
-    randomWords = require("random-words"),
     verifyToken = require("../helpers/verifyToken"),
     { gameValidation } = require("../helpers/errors/gameValidator"),
     { wordMatches } = require("../helpers/gameHelpers/wordMatchs"),
@@ -15,6 +14,7 @@ const router = require("express").Router(),
 
     } = require("../db/query/gameQuery"),
     { POSTplayerWon } = require("../db/query/gameSequenceQuery"),
+    { chooseWords } = require("../helpers/chooseWord"),
     knex = require("../db/knex");
 
 
@@ -46,17 +46,12 @@ router.get("/completedGames", verifyToken, async (request, response) => {
 router.post("/create", verifyToken, async (request, response) => {
 
 
-    var randomPick = randomWords({ exactly: 1, maxLength: 5 })[0]; // a randomly picked word
-    var wordArr = randomPick.split("");
-    var wordMatchs = "";
+
+    var word = chooseWords(request.body.level)[0];
+    var match = chooseWords(request.body.level)[1];
 
 
-    // iterate over the array get all the dashs for our matchs row in the game db
-    wordArr.forEach((character) => {
-        wordMatchs += "-";
-    });
-
-    await POSTcreateGame(request.body.tokenId, randomPick, wordMatchs.trimRight())
+    await POSTcreateGame(request.body.tokenId, word ,match)
         .returning("*")
         .then((gameData) => {
             return response.status(200).json({

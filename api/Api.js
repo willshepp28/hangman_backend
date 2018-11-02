@@ -10,17 +10,6 @@ const router = require("express").Router(),
 
 
 
-router.get("/", async (request, response) => {
-
-    var users = await knex.select()
-        .from("users")
-        .then(user => { return user })
-        .catch(error => response.status(400).json(error));
-
-
-    response.status(200).json(users);
-
-});
 
 
 /*
