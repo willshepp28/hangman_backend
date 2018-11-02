@@ -5,7 +5,6 @@ const router = require("express").Router(),
         GETtotalGamesLost
 
     } = require("../db/query/gameStatisticsQuery"),
-    randomWords = require("random-words"),
     verifyToken = require("../helpers/verifyToken"),
     knex = require("../db/knex");
 

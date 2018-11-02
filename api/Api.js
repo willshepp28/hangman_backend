@@ -1,5 +1,4 @@
 const router = require("express").Router(),
-    randomWords = require("random-words"),
     { getUser} = require("../db/query/userQuery"),
     { registerUser} = require("../db/query/authQuery"),
     verifyToken = require("../helpers/verifyToken"),
