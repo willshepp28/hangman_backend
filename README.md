@@ -8,6 +8,7 @@
 This is my Hangman app. Request by Mavrck.<br>
 -Thanks for the chance Brian.<br>
 
+Check out the App Live at https://hangman-frontend.herokuapp.com/<br>
 Check out the front end code at https://github.com/willshepp28/hangman_frontend
 
 ---
