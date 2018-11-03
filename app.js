@@ -73,3 +73,6 @@ application.use("/api/v1/gamestats", gamestatApi);
 application.listen(port, () => {
     console.log(`Server listening on port ${port}`);
 });
+
+
+module.exports = application;

@@ -33,7 +33,7 @@ router.post("/login", (request, response) => {
                     return response.status(404).json("no user found")
                 } else {
 
-                    let token = jwt.sign({ user }, process.env.JWT_SECRET);
+                    let token = jwt.sign({ user: [{id: user[0].id}] }, process.env.JWT_SECRET);
                     response.status(200).json({ token })
                 }
             })
