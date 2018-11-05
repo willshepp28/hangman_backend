@@ -14,6 +14,7 @@ const compression = require('compression'),
     gameApi = require("./api/GameAPI"),
     gamestatApi = require("./api/GameStatAPI"),
     gameSequenceApi = require("./api/GameSequenceAPI"),
+    gameSavedApi = require("./api/GameSavedAPI");
     port = process.env.PORT || 3000;
 
 application = express();
@@ -55,6 +56,7 @@ require('dotenv').config();
 | Api
 |--------------------------------------------------------------------------
 */
+application.use("/api/v1/game-saved", gameSavedApi);
 application.use("/api/v1/auth/providers", AuthProvidersApi);
 application.use("/api/v1/sequence", gameSequenceApi);
 application.use("/api/v1/user", userApi);
