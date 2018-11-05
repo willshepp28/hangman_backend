@@ -27,7 +27,6 @@ passport.use(new FacebookStrategy({
 },
     async (accessToken, refreshToken, profile, callback) => {
 
-
         const { id, displayName } = profile;
         // // 1. Check to see if user is already in the databse
         const User = await GETfindByFBid(id);
