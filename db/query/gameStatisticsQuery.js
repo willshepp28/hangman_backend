@@ -26,7 +26,7 @@ function SelectGameStatistics(...props) {
 |--------------------------------------------------------------------------
 */
 function totalGamesPlayed(userId) {
-    return GameStatistics().where({ id: userId }).count();
+    return GameStatistics().where({ userId: userId }).count();
 };
 
 
