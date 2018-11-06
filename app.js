@@ -8,6 +8,7 @@ const compression = require('compression'),
     morgan = require("morgan"),
     cors = require("cors"),
     bodyParser = require("body-parser"),
+    expressValidator = require("express-validator"),
     Api = require("./api/Api"),
     AuthProvidersApi = require("./api/AuthProviders"),
     userApi = require("./api/UserAPI"),
@@ -29,6 +30,8 @@ application = express();
 */
 console.clear();
 
+application.use(helmet())
+
 // console.log(fs.readlinkSync.toString(path.resolve("")))
 application.use(compression())
 // to log requests
@@ -39,6 +42,15 @@ application.use(compression())
 application.use(bodyParser.json());
 // parse application/x-www-form-urlencoded
 application.use(bodyParser.urlencoded({ extended: false }));
+
+application.use(expressValidator);
+
+application.use(function(request, response, next) {
+    for (var item in request.body) {
+      request.sanitize(item).escape();
+    }
+    next();
+  });
 
 
 application.use(cors());
