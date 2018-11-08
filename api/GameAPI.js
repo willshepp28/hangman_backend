@@ -41,8 +41,7 @@ router.get("/completedGames", verifyToken, async (request, response) => {
 */
 router.post("/create", verifyToken, async (request, response) => {
 
-    var word = chooseWords(request.body.level)[0];
-    var match = chooseWords(request.body.level)[1];
+    var [word, match] =  chooseWords(request.body.level);
 
     
     await POSTcreateGame(request.body.tokenId, word ,match)

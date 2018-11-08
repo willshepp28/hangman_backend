@@ -41,6 +41,8 @@ function chooseWords(level) {
         wordMatchs += "-";
     });
 
+   
+
     return [randomPick, wordMatchs.trimRight()]
 
 }
