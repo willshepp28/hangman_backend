@@ -45,14 +45,14 @@ application.use(bodyParser.json());
 // parse application/x-www-form-urlencoded
 application.use(bodyParser.urlencoded({ extended: false }));
 
-application.use(expressValidator());
+// application.use(expressValidator());
 
-application.use(function(request, response, next) {
-    for (var item in request.body) {
-      request.sanitize(item).escape();
-    }
-    next();
-  });
+// application.use(function(request, response, next) {
+//     for (var item in request.body) {
+//       request.sanitize(item).escape();
+//     }
+//     next();
+//   });
 
 
 application.use(cors());
