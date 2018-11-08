@@ -3,8 +3,7 @@ verifyToken = require("../helpers/verifyToken"),
 { 
     GETUsernameById
     
-} = require("../db/query/userQuery"),
-knex = require("../db/knex");
+} = require("../db/query/userQuery");
 
 
 

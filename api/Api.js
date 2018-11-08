@@ -1,13 +1,8 @@
 const router = require("express").Router(),
-    { getUser } = require("../db/query/userQuery"),
-    { registerUser } = require("../db/query/authQuery"),
-    verifyToken = require("../helpers/verifyToken"),
-    { encrypt } = require("../helpers/encrypt"),
     { authSchema } = require("../helpers/validators/authentication/authValidator"),
     { POSTsignUp, GETlogin } = require("../db/query/authQuery"),
     Joi = require("joi"),
-    jwt = require("jsonwebtoken"),
-    knex = require("../db/knex");
+    jwt = require("jsonwebtoken");
 
 
 
@@ -38,7 +33,7 @@ router.post("/login", (request, response) => {
                     response.status(200).json({ token })
                 }
             })
-            .catch(error => { return response.status(500).json(error) })
+            .catch(error => { return response.status(400).send("Username or password is incorrect") })
     })
 });
 
@@ -59,8 +54,8 @@ router.post("/signup", (request, response) => {
         }
 
         POSTsignUp(request.body.username, request.body.password)
-            .then(() => { return response.status(200).send("New user created") })
-            .catch((error) => { return response.status(500).send(error) })
+            .then(() => { return response.status(200).send("Success") })
+            .catch((error) => { return response.status(400).send(error) })
 
     })
 });

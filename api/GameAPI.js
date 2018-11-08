@@ -1,8 +1,6 @@
 const router = require("express").Router(),
     verifyToken = require("../helpers/verifyToken"),
-    { gameValidation } = require("../helpers/errors/gameValidator"),
     { wordMatches } = require("../helpers/gameHelpers/wordMatchs"),
-    { validateGuessInput } = require("../helpers/errors/inputErrors"),
     {
         GETGameById,
         GETgameWhereComplete,
@@ -13,9 +11,7 @@ const router = require("express").Router(),
         GETcheckCompletion
 
     } = require("../db/query/gameQuery"),
-    { POSTplayerWon } = require("../db/query/gameSequenceQuery"),
-    { chooseWords } = require("../helpers/chooseWord"),
-    knex = require("../db/knex");
+    { chooseWords } = require("../helpers/chooseWord");
 
 
 
@@ -45,12 +41,10 @@ router.get("/completedGames", verifyToken, async (request, response) => {
 */
 router.post("/create", verifyToken, async (request, response) => {
 
-
-
     var word = chooseWords(request.body.level)[0];
     var match = chooseWords(request.body.level)[1];
 
-
+    
     await POSTcreateGame(request.body.tokenId, word ,match)
         .returning("*")
         .then((gameData) => {

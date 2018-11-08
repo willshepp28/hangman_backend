@@ -1,8 +1,7 @@
 const router = require("express").Router(),
-    { POSTplayerLost, POSTplayerWon } = require("../db/query/gameSequenceQuery"),
+    { POSTplayerLost } = require("../db/query/gameSequenceQuery"),
     { GETgameWhereWonFalse } = require("../db/query/gameQuery"),
-    verifyToken = require("../helpers/verifyToken"),
-    knex = require("../db/knex");
+    verifyToken = require("../helpers/verifyToken");
 
 
 
@@ -37,12 +36,6 @@ router.post("/won", verifyToken, async (request, response) => {
             console.log(game);
 
         });
-
-
-    // POSTplayerWon(request.body.id, request.userId)
-    //     .returning("status")
-    //     .then(data => response.status(200).json(data))
-    //     .catch(error => response.status(400).json(error));
 });
 
 

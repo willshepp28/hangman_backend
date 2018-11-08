@@ -6,10 +6,6 @@
 const knex = require("../knex");
 
 
-function GameSaved() {
-    return knex("game");
-};
-
 function SelectGameSaved(...props) {
     return knex.select(...props).from("game");
 };

@@ -22,7 +22,7 @@ function SelectAuthentication(...props) {
 |--------------------------------------------------------------------------
 */
 function signUp(username, password) {
-    return knex("users").insert({ username: username, password: encrypt(password)})
+    return Authentication().insert({ username: username, password: encrypt(password)})
 }
 
 
@@ -33,7 +33,7 @@ function signUp(username, password) {
 |--------------------------------------------------------------------------
 */
 function logIn(username, password) {
-    return knex("users").where({ username: username, password: encrypt(password)})
+    return Authentication().where({ username: username, password: encrypt(password)})
 }
 
 
