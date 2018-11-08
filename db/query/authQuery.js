@@ -4,6 +4,7 @@
  |--------------------------------------------------------------------------
  */
 const knex = require("../knex");
+const { encrypt } = require("../../helpers/encrypt");
 
 
 function Authentication() {
@@ -15,9 +16,20 @@ function SelectAuthentication(...props) {
 };
 
 
+/*
+|--------------------------------------------------------------------------
+|  QUERY - signs up new user
+|--------------------------------------------------------------------------
+*/
+function signUp(username, password) {
+    return knex("users").insert({ username: username, password: encrypt(password)})
+}
 
 
 
 
 
-module.exports = {};
+
+module.exports = {
+    POSTsignUp: signUp
+};

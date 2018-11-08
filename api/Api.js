@@ -4,6 +4,7 @@ const router = require("express").Router(),
     verifyToken = require("../helpers/verifyToken"),
     { encrypt } = require("../helpers/encrypt"),
     { signupSchema } = require("../helpers/validators/authentication/signupValidator"),
+    { POSTsignUp } = require("../db/query/authQuery"),
     Joi = require("joi"),
     jwt = require("jsonwebtoken"),
      knex = require("../db/knex");
@@ -57,25 +58,16 @@ router.post("/login", (request, response) => {
 |--------------------------------------------------------------------------
 */
 router.post("/signup", (request, response) => {
-    console.log(request.body);
-
+ 
     Joi.validate(request.body, signupSchema, (error, result) => {
         
         if(error) {
-            console.log("not stored")
             return response.status(400).json(error);
         }
 
-        knex("users")
-        .insert({
-            username: request.body.username,
-            password: encrypt(request.body.password)
-        })
-        .returning("*")
-        .then(success => {
-            return response.status(200).json("New user has been created");
-        })
-        .catch(error => { return response.status(500).json(error)})
+        POSTsignUp(request.body.username, request.body.password)
+            .then(() => { return response.status(200).send("New user created")})
+            .catch((error) => { return response.status(500).send(error)})
 
     })
 });
