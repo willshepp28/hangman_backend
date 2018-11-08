@@ -7,8 +7,10 @@ const compression = require('compression'),
      express = require("express"),
     morgan = require("morgan"),
     cors = require("cors"),
+    helmet = require("helmet"),
     bodyParser = require("body-parser"),
     expressValidator = require("express-validator"),
+    joi = require("joi"),
     Api = require("./api/Api"),
     AuthProvidersApi = require("./api/AuthProviders"),
     userApi = require("./api/UserAPI"),
@@ -43,7 +45,7 @@ application.use(bodyParser.json());
 // parse application/x-www-form-urlencoded
 application.use(bodyParser.urlencoded({ extended: false }));
 
-application.use(expressValidator);
+application.use(expressValidator());
 
 application.use(function(request, response, next) {
     for (var item in request.body) {

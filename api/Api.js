@@ -3,6 +3,8 @@ const router = require("express").Router(),
     { registerUser} = require("../db/query/authQuery"),
     verifyToken = require("../helpers/verifyToken"),
     { encrypt } = require("../helpers/encrypt"),
+    { signupSchema } = require("../helpers/validators/authentication/signupValidator"),
+    Joi = require("joi"),
     jwt = require("jsonwebtoken"),
      knex = require("../db/knex");
 
@@ -17,6 +19,7 @@ const router = require("express").Router(),
 |--------------------------------------------------------------------------
 */
 router.post("/login", (request, response) => {
+
 
 
     if(request.body.username && request.body.password) {
@@ -56,24 +59,25 @@ router.post("/login", (request, response) => {
 router.post("/signup", (request, response) => {
     console.log(request.body);
 
-
-    if(request.body.username && request.body.password) {
+    Joi.validate(request.body, signupSchema, (error, result) => {
+        
+        if(error) {
+            console.log("not stored")
+            return response.status(400).json(error);
+        }
 
         knex("users")
-            .insert({
-                username: request.body.username,
-                password: encrypt(request.body.password)
-            })
-            .returning("*")
-            .then(success => {
-                return response.status(200).json("New user has been created");
-            })
-            .catch(error => { return response.status(500).json(error)})
+        .insert({
+            username: request.body.username,
+            password: encrypt(request.body.password)
+        })
+        .returning("*")
+        .then(success => {
+            return response.status(200).json("New user has been created");
+        })
+        .catch(error => { return response.status(500).json(error)})
 
-    } else {
-        return response.status(500).json(error);
-    }
-    
+    })
 });
 
 
