@@ -27,9 +27,20 @@ function signUp(username, password) {
 
 
 
+/*
+|--------------------------------------------------------------------------
+|  QUERY - authenticates user
+|--------------------------------------------------------------------------
+*/
+function logIn(username, password) {
+    return knex("users").where({ username: username, password: encrypt(password)})
+}
+
+
 
 
 
 module.exports = {
-    POSTsignUp: signUp
+    POSTsignUp: signUp,
+    GETlogin: logIn
 };

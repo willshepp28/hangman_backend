@@ -1,13 +1,13 @@
 const router = require("express").Router(),
-    { getUser} = require("../db/query/userQuery"),
-    { registerUser} = require("../db/query/authQuery"),
+    { getUser } = require("../db/query/userQuery"),
+    { registerUser } = require("../db/query/authQuery"),
     verifyToken = require("../helpers/verifyToken"),
     { encrypt } = require("../helpers/encrypt"),
-    { signupSchema } = require("../helpers/validators/authentication/signupValidator"),
-    { POSTsignUp } = require("../db/query/authQuery"),
+    { authSchema } = require("../helpers/validators/authentication/authValidator"),
+    { POSTsignUp, GETlogin } = require("../db/query/authQuery"),
     Joi = require("joi"),
     jwt = require("jsonwebtoken"),
-     knex = require("../db/knex");
+    knex = require("../db/knex");
 
 
 
@@ -21,32 +21,25 @@ const router = require("express").Router(),
 */
 router.post("/login", (request, response) => {
 
+    Joi.validate(request.body, authSchema, (error, result) => {
 
+        if (error) {
+            return response.status(400).json(error);
+        }
 
-    if(request.body.username && request.body.password) {
-
-        knex("users")
-            .where({
-                username: request.body.username,
-                password: encrypt(request.body.password)
-            })
+        GETlogin(request.body.username, request.body.password)
             .then(user => {
 
                 // if user arrays is empty send a 202 status code
-                if(user < 1) {
+                if (user < 1) {
                     return response.status(404).json("no user found")
                 } else {
-
-                    let token = jwt.sign({ user: [{id: user[0].id}] }, process.env.JWT_SECRET);
+                    let token = jwt.sign({ user: [{ id: user[0].id }] }, process.env.JWT_SECRET);
                     response.status(200).json({ token })
                 }
             })
-            .catch(error => { console.log(error); return response.status(500).json(error)})
-    } else {
-        console.log(error);
-        return response.status(500).json(error)
-    }
-       
+            .catch(error => { return response.status(500).json(error) })
+    })
 });
 
 
@@ -58,16 +51,16 @@ router.post("/login", (request, response) => {
 |--------------------------------------------------------------------------
 */
 router.post("/signup", (request, response) => {
- 
-    Joi.validate(request.body, signupSchema, (error, result) => {
-        
-        if(error) {
+
+    Joi.validate(request.body, authSchema, (error, result) => {
+
+        if (error) {
             return response.status(400).json(error);
         }
 
         POSTsignUp(request.body.username, request.body.password)
-            .then(() => { return response.status(200).send("New user created")})
-            .catch((error) => { return response.status(500).send(error)})
+            .then(() => { return response.status(200).send("New user created") })
+            .catch((error) => { return response.status(500).send(error) })
 
     })
 });
